@@ -27,7 +27,7 @@ func ReverseProxy() http.HandlerFunc {
 		(&httputil.ReverseProxy{
 			Director: func(req *http.Request) {
 				req.URL.Scheme = "http"
-				req.URL.Host = req.RequestURI
+				req.URL.Host = "/" + req.RequestURI
 			},
 			Transport: transport,
 		}).ServeHTTP(w, req)
@@ -35,5 +35,6 @@ func ReverseProxy() http.HandlerFunc {
 }
 
 func getConnection(req *http.Request) (net.Conn, error) {
+	println("forwarding to http://"+os.Getenv("DST_IP") + ":" + os.Getenv("DST_PORT"))
 	return net.Dial("tcp", os.Getenv("DST_IP") + ":" + os.Getenv("DST_PORT"))
 }
